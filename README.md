@@ -11,7 +11,7 @@
 </div>
 
 ---
-
+Test
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pass-culture_pass-culture-app-native&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pass-culture_pass-culture-app-native) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=pass-culture_pass-culture-app-native&metric=coverage)](https://sonarcloud.io/summary/new_code?id=pass-culture_pass-culture-app-native)
 
 ![Current tests](https://img.shields.io/github/checks-status/pass-culture/pass-culture-app-native/master?label=Master%20tests)
