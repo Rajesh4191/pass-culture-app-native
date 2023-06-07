@@ -45,9 +45,9 @@ describe('<Offer />', () => {
   it('animates on scroll', async () => {
     renderOfferPage()
     expect(screen.getByTestId('offerHeaderName').props.style.opacity).toBe(0)
+    const scrollContainer = screen.getByTestId('offer-container')
 
     await act(async () => {
-      const scrollContainer = screen.getByTestId('offer-container')
       fireEvent.scroll(scrollContainer, scrollEvent)
     })
 
@@ -66,7 +66,9 @@ describe('<Offer />', () => {
     renderOfferPage()
 
     const bookingOfferButton = await screen.findByText('Réserver l’offre')
-    fireEvent.press(bookingOfferButton)
+    await act(async () => {
+      fireEvent.press(bookingOfferButton)
+    })
 
     expect(screen.queryByText('Identifie-toi pour réserver l’offre')).toBeTruthy()
   })
@@ -82,7 +84,9 @@ describe('<Offer />', () => {
     renderOfferPage()
 
     const bookingOfferButton = await screen.findByText('Réserver l’offre')
-    fireEvent.press(bookingOfferButton)
+    await act(async () => {
+      fireEvent.press(bookingOfferButton)
+    })
 
     expect(analytics.logConsultAuthenticationModal).toHaveBeenNthCalledWith(1, offerId)
   })
@@ -114,21 +118,21 @@ describe('<Offer />', () => {
       const { getByTestId } = renderOfferPage()
       const scrollView = getByTestId('offer-container')
 
-      fireEvent.scroll(scrollView, nativeEventBottom)
+      await act(async () => {
+        fireEvent.scroll(scrollView, nativeEventBottom)
+      })
 
-      await waitFor(() => {
-        expect(analytics.logPlaylistVerticalScroll).toHaveBeenNthCalledWith(1, {
-          fromOfferId: undefined,
-          offerId: 116656,
-          playlistType: PlaylistType.SAME_CATEGORY_SIMILAR_OFFERS,
-          shouldUseAlgoliaRecommend: false,
-        })
-        expect(analytics.logPlaylistVerticalScroll).toHaveBeenNthCalledWith(2, {
-          fromOfferId: undefined,
-          offerId: 116656,
-          playlistType: PlaylistType.OTHER_CATEGORIES_SIMILAR_OFFERS,
-          shouldUseAlgoliaRecommend: false,
-        })
+      expect(analytics.logPlaylistVerticalScroll).toHaveBeenNthCalledWith(1, {
+        fromOfferId: undefined,
+        offerId: 116656,
+        playlistType: PlaylistType.SAME_CATEGORY_SIMILAR_OFFERS,
+        shouldUseAlgoliaRecommend: false,
+      })
+      expect(analytics.logPlaylistVerticalScroll).toHaveBeenNthCalledWith(2, {
+        fromOfferId: undefined,
+        offerId: 116656,
+        playlistType: PlaylistType.OTHER_CATEGORIES_SIMILAR_OFFERS,
+        shouldUseAlgoliaRecommend: false,
       })
     })
 

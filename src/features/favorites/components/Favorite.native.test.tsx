@@ -107,7 +107,9 @@ describe('<Favorite /> component', () => {
     renderFavorite()
 
     const shareButton = await screen.findByLabelText(`Partager l’offre ${favorite.offer.name}`)
-    fireEvent.press(shareButton)
+    await act(async () => {
+      fireEvent.press(shareButton)
+    })
 
     expect(share).toHaveBeenCalledTimes(1)
   })
@@ -116,7 +118,9 @@ describe('<Favorite /> component', () => {
     renderFavorite()
 
     const shareButton = await screen.findByLabelText(`Partager l’offre ${favorite.offer.name}`)
-    fireEvent.press(shareButton)
+    await act(async () => {
+      fireEvent.press(shareButton)
+    })
 
     expect(analytics.logShare).toHaveBeenNthCalledWith(1, {
       type: 'Offer',
