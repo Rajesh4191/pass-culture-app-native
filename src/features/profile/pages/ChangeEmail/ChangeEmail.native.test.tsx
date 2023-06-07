@@ -1,13 +1,11 @@
-import { rest } from 'msw'
 import React from 'react'
 
 import { navigate } from '__mocks__/@react-navigation/native'
 import { UpdateEmailTokenExpiration } from 'api/gen'
 import { CHANGE_EMAIL_ERROR_CODE } from 'features/profile/enums'
 import { analytics } from 'libs/analytics'
-import { env } from 'libs/environment'
+import { mockServer } from 'tests/mswServer'
 import { reactQueryProviderHOC } from 'tests/reactQueryProviderHOC'
-import { server } from 'tests/server'
 import { act, fireEvent, render, screen, superFlushWithAct, waitFor } from 'tests/utils'
 import { SNACK_BAR_TIME_OUT } from 'ui/components/snackBar/SnackBarContext'
 import { SnackBarHelperSettings } from 'ui/components/snackBar/types'
@@ -26,15 +24,13 @@ jest.mock('ui/components/snackBar/SnackBarContext', () => ({
   }),
 }))
 
-server.use(
-  rest.get<UpdateEmailTokenExpiration>(
-    env.API_BASE_URL + '/native/v1/profile/token_expiration',
-    (_req, res, ctx) => res(ctx.status(200), ctx.json({ expiration: '123456789' }))
-  )
-)
-
 describe('<ChangeEmail/>', () => {
-  beforeEach(simulateUpdateEmailSuccess)
+  beforeEach(() => {
+    mockServer.get<UpdateEmailTokenExpiration>('/native/v1/profile/token_expiration', {
+      expiration: '123456789',
+    })
+    simulateUpdateEmailSuccess()
+  })
 
   it('should render correctly', async () => {
     renderChangeEmail()
@@ -98,6 +94,7 @@ describe('<ChangeEmail/>', () => {
   })
 
   describe('When email change succeeds', () => {
+    // beforeEach(() => simulateUpdateEmailSuccess())
     it('should navigate to Profile ', async () => {
       renderChangeEmail()
       await fillInputs({})
@@ -233,25 +230,17 @@ const submitForm = async () => {
 }
 
 function simulateUpdateEmailSuccess() {
-  server.use(
-    rest.post(env.API_BASE_URL + '/native/v1/profile/update_email', async (_, res, ctx) =>
-      res.once(ctx.status(200))
-    )
-  )
+  mockServer.post('/native/v1/profile/update_email', {})
 }
 
 function simulateUpdateEmailError(code: CHANGE_EMAIL_ERROR_CODE) {
-  server.use(
-    rest.post(env.API_BASE_URL + '/native/v1/profile/update_email', async (_, res, ctx) =>
-      res.once(ctx.status(400), ctx.json({ code }))
-    )
-  )
+  mockServer.post('/native/v1/profile/update_email', {
+    responseOptions: { statusCode: 400, data: { code } },
+  })
 }
 
 function simulateCurrentEmailChange() {
-  server.use(
-    rest.get(env.API_BASE_URL + '/native/v1/profile/token_expiration', async (_, res, ctx) =>
-      res.once(ctx.status(200), ctx.json({ expiration: '2021-12-07T13:45:05.812190' }))
-    )
-  )
+  mockServer.get('/native/v1/profile/token_expiration', {
+    expiration: '2021-12-07T13:45:05.812190',
+  })
 }

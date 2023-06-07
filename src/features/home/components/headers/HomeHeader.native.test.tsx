@@ -1,5 +1,4 @@
 import mockdate from 'mockdate'
-import { rest } from 'msw'
 import React from 'react'
 
 import {
@@ -14,8 +13,8 @@ import { nonBeneficiaryUser } from 'fixtures/user'
 import { env } from 'libs/environment'
 import { GeolocPermissionState, useGeolocation } from 'libs/geolocation'
 import { Credit, useAvailableCredit } from 'shared/user/useAvailableCredit'
+import { mockServer } from 'tests/mswServer'
 import { reactQueryProviderHOC } from 'tests/reactQueryProviderHOC'
-import { server } from 'tests/server'
 import { render, screen, waitFor } from 'tests/utils'
 
 import { HomeHeader } from './HomeHeader'
@@ -139,20 +138,13 @@ describe('HomeHeader', () => {
   })
 
   it('should display activation banner with BicolorUnlock icon when banner api call return activation banner', async () => {
-    server.use(
-      rest.get<BannerResponse>(env.API_BASE_URL + '/native/v1/banner', (_req, res, ctx) =>
-        res(
-          ctx.status(200),
-          ctx.json({
-            banner: {
-              name: BannerName.activation_banner,
-              text: 'à dépenser sur l’application',
-              title: 'Débloque tes 1000\u00a0€',
-            },
-          })
-        )
-      )
-    )
+    mockServer.get<BannerResponse>('/native/v1/banner', {
+      banner: {
+        name: BannerName.activation_banner,
+        text: 'à dépenser sur l’application',
+        title: 'Débloque tes 1000\u00a0€',
+      },
+    })
 
     renderHomeHeader()
 
@@ -162,20 +154,13 @@ describe('HomeHeader', () => {
   })
 
   it('should display activation banner with ArrowAgain icon when banner api call return retry_identity_check_banner', async () => {
-    server.use(
-      rest.get<BannerResponse>(env.API_BASE_URL + '/native/v1/banner', (_req, res, ctx) =>
-        res(
-          ctx.status(200),
-          ctx.json({
-            banner: {
-              name: BannerName.retry_identity_check_banner,
-              title: 'Retente ubble',
-              text: 'pour débloquer ton crédit',
-            },
-          })
-        )
-      )
-    )
+    mockServer.get<BannerResponse>('/native/v1/banner', {
+      banner: {
+        name: BannerName.retry_identity_check_banner,
+        title: 'Retente ubble',
+        text: 'pour débloquer ton crédit',
+      },
+    })
 
     renderHomeHeader()
 
@@ -185,20 +170,13 @@ describe('HomeHeader', () => {
   })
 
   it('should display activation banner with BirthdayCake icon when banner api call return transition_17_18_banner', async () => {
-    server.use(
-      rest.get<BannerResponse>(env.API_BASE_URL + '/native/v1/banner', (_req, res, ctx) =>
-        res(
-          ctx.status(200),
-          ctx.json({
-            banner: {
-              name: BannerName.transition_17_18_banner,
-              title: 'Débloque tes 600\u00a0€',
-              text: 'Confirme tes informations',
-            },
-          })
-        )
-      )
-    )
+    mockServer.get<BannerResponse>('/native/v1/banner', {
+      banner: {
+        name: BannerName.transition_17_18_banner,
+        title: 'Débloque tes 600\u00a0€',
+        text: 'Confirme tes informations',
+      },
+    })
 
     renderHomeHeader()
 
@@ -216,19 +194,16 @@ function renderHomeHeader() {
 }
 
 function mockGeolocBannerFromBackend() {
-  server.use(
-    rest.get<BannerResponse>(env.API_BASE_URL + '/native/v1/banner', (req, res, ctx) => {
-      const isGeolocated = req.url.searchParams.get('isGeolocated')
-      const json = isGeolocated
-        ? {
-            banner: {
-              name: BannerName.geolocation_banner,
-              title: 'Géolocalise-toi',
-              text: 'Pour trouver des offres autour de toi.',
-            },
-          }
-        : {}
-      return res(ctx.status(200), ctx.json(json))
-    })
-  )
+  mockServer.get<BannerResponse>('/native/v1/banner', {
+    responseOptions: {
+      data: {
+        banner: {
+          name: BannerName.geolocation_banner,
+          title: 'Géolocalise-toi',
+          text: 'Pour trouver des offres autour de toi.',
+        },
+      },
+    },
+    requestOptions: { persist: true },
+  })
 }

@@ -1,12 +1,8 @@
-import { rest } from 'msw'
-
-import { OfferReportReasons } from 'api/gen'
 import { useAuthContext } from 'features/auth/context/AuthContext'
 import { offerReportReasonResponseSnap } from 'features/offer/fixtures/offerReportReasonResponse'
-import { env } from 'libs/environment'
 import { useNetInfoContext as useNetInfoContextDefault } from 'libs/network/NetInfoWrapper'
+import { mockServer } from 'tests/mswServer'
 import { reactQueryProviderHOC } from 'tests/reactQueryProviderHOC'
-import { server } from 'tests/server'
 import { renderHook, waitFor } from 'tests/utils'
 
 import { useReasonsForReporting } from './useReasonsForReporting'
@@ -16,14 +12,10 @@ const mockUseAuthContext = useAuthContext as jest.MockedFunction<typeof useAuthC
 
 const mockUseNetInfoContext = useNetInfoContextDefault as jest.Mock
 
-server.use(
-  rest.get<OfferReportReasons>(
-    env.API_BASE_URL + '/native/v1/offer/report/reasons',
-    (req, res, ctx) => res(ctx.status(200), ctx.json(offerReportReasonResponseSnap))
-  )
-)
-
 describe('useReasonsForReporting hook', () => {
+  beforeEach(() => {
+    mockServer.get('/native/v1/offer/report/reasons', offerReportReasonResponseSnap)
+  })
   afterEach(jest.resetAllMocks)
 
   it('should retrieve reasons for reporting data when logged in', async () => {

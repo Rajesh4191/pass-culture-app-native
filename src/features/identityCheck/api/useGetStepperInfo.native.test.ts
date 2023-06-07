@@ -1,22 +1,15 @@
-import { rest } from 'msw'
-
 import { useGetStepperInfo } from 'features/identityCheck/api/useGetStepperInfo'
 import {
   SubscriptionStepperErrorResponseFixture,
   SubscriptionStepperResponseFixture,
 } from 'features/identityCheck/pages/helpers/stepperInfo.fixture'
-import { env } from 'libs/environment'
+import { mockServer } from 'tests/mswServer'
 import { reactQueryProviderHOC } from 'tests/reactQueryProviderHOC'
-import { server } from 'tests/server'
 import { renderHook, waitFor } from 'tests/utils'
 
 describe('useGetStepperInfo', () => {
   it('should get stepsToDisplay from the back', async () => {
-    server.use(
-      rest.get(env.API_BASE_URL + '/native/v1/subscription/stepper', (_req, res, ctx) =>
-        res(ctx.status(200), ctx.json(SubscriptionStepperResponseFixture))
-      )
-    )
+    mockServer.get('/native/v1/subscription/stepper', SubscriptionStepperResponseFixture)
     const result = renderGetStepperInfo()
 
     await waitFor(() => {
@@ -29,11 +22,8 @@ describe('useGetStepperInfo', () => {
     })
   })
   it('should return an errorMessage', async () => {
-    server.use(
-      rest.get(env.API_BASE_URL + '/native/v1/subscription/stepper', (_req, res, ctx) =>
-        res(ctx.status(200), ctx.json(SubscriptionStepperErrorResponseFixture))
-      )
-    )
+    mockServer.get('/native/v1/subscription/stepper', SubscriptionStepperErrorResponseFixture)
+
     const result = renderGetStepperInfo()
 
     await waitFor(() => {
@@ -48,11 +38,8 @@ describe('useGetStepperInfo', () => {
   })
 
   it('should return empty stepsToDisplay list and titles if the data is undefined', async () => {
-    server.use(
-      rest.get(env.API_BASE_URL + '/native/v1/subscription/stepper', (_req, res, ctx) =>
-        res(ctx.status(200), ctx.json(undefined))
-      )
-    )
+    mockServer.get('/native/v1/subscription/stepper', { responseOptions: { data: undefined } })
+
     const result = renderGetStepperInfo()
 
     await waitFor(() => {

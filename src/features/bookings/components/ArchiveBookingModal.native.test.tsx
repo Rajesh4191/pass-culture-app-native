@@ -1,4 +1,3 @@
-import { rest } from 'msw'
 import React from 'react'
 
 import {
@@ -6,9 +5,8 @@ import {
   ArchiveBookingModalProps,
 } from 'features/bookings/components/ArchiveBookingModal'
 import { mockGoBack } from 'features/navigation/__mocks__/useGoBack'
-import { env } from 'libs/environment'
+import { mockServer } from 'tests/mswServer'
 import { reactQueryProviderHOC } from 'tests/reactQueryProviderHOC'
-import { server } from 'tests/server'
 import { fireEvent, render, waitFor } from 'tests/utils'
 import { SnackBarHelperSettings } from 'ui/components/snackBar/types'
 
@@ -40,11 +38,8 @@ describe('<ArchiveBookingModal />', () => {
     expect(onDismiss).toHaveBeenCalledTimes(1)
   })
   it('should call the mutation to toggle booking display', async () => {
-    server.use(
-      rest.post(env.API_BASE_URL + '/native/v1/bookings/2/toggle_display', (req, res, ctx) =>
-        res.once(ctx.status(204))
-      )
-    )
+    mockServer.post('/native/v1/bookings/2/toggle_display', {})
+
     const onDismiss = jest.fn()
     const { getByText } = renderArchiveDigitalBookingOfferModal({
       visible: true,
@@ -69,11 +64,9 @@ describe('<ArchiveBookingModal />', () => {
   })
   it('should show error snackbar if terminate booking request fails', async () => {
     const response = { code: 'ALREADY_USED', message: 'La réservation a déjà été utilisée.' }
-    server.use(
-      rest.post(env.API_BASE_URL + '/native/v1/bookings/2/toggle_display', (req, res, ctx) =>
-        res.once(ctx.status(400), ctx.json(response))
-      )
-    )
+    mockServer.post('/native/v1/bookings/2/toggle_display', {
+      responseOptions: { statusCode: 400, data: response },
+    })
 
     const onDismiss = jest.fn()
     const { getByText } = renderArchiveDigitalBookingOfferModal({

@@ -1,11 +1,8 @@
-import { rest } from 'msw'
-
 import { IdentityCheckMethod, NextSubscriptionStepResponse, SubscriptionStep } from 'api/gen'
 import { useAuthContext } from 'features/auth/context/AuthContext'
-import { env } from 'libs/environment'
 import { useNetInfoContext as useNetInfoContextDefault } from 'libs/network/NetInfoWrapper'
+import { mockServer } from 'tests/mswServer'
 import { reactQueryProviderHOC } from 'tests/reactQueryProviderHOC'
-import { server } from 'tests/server'
 import { renderHook, waitFor } from 'tests/utils'
 
 import { useNextSubscriptionStep } from './useNextSubscriptionStep'
@@ -96,21 +93,18 @@ describe('useNextSubscriptionStep', () => {
 })
 
 function mockNextStepRequest(nextSubscription: NextSubscriptionStepResponse) {
-  return server.use(
-    rest.get<NextSubscriptionStepResponse>(
-      env.API_BASE_URL + `/native/v1/subscription/next_step`,
-      (_req, res, ctx) => res.once(ctx.status(200), ctx.json(nextSubscription))
-    )
+  mockServer.get<{ nextSubscription: NextSubscriptionStepResponse }>(
+    '/native/v1/subscription/next_step',
+    {
+      nextSubscription,
+    }
   )
 }
 
 function mockNextStepRequestError() {
-  return server.use(
-    rest.get<NextSubscriptionStepResponse>(
-      env.API_BASE_URL + `/native/v1/subscription/next_step`,
-      (_req, res, ctx) => res.once(ctx.status(400))
-    )
-  )
+  mockServer.get<NextSubscriptionStepResponse>('/native/v1/subscription/next_step', {
+    responseOptions: { statusCode: 400 },
+  })
 }
 
 const renderNextSubscriptionStepHook = () =>

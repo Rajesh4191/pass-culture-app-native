@@ -1,11 +1,8 @@
-import { rest } from 'msw'
-
 import { EmailHistoryEventTypeEnum, EmailUpdateStatus } from 'api/gen'
 import { useAuthContext } from 'features/auth/context/AuthContext'
-import { env } from 'libs/environment'
 import { useNetInfoContext as useNetInfoContextDefault } from 'libs/network/NetInfoWrapper'
+import { mockServer } from 'tests/mswServer'
 import { reactQueryProviderHOC } from 'tests/reactQueryProviderHOC'
-import { server } from 'tests/server'
 import { renderHook, waitFor } from 'tests/utils'
 
 import { useEmailUpdateStatus } from './useEmailUpdateStatus'
@@ -21,14 +18,10 @@ const emailUpdateStatus: EmailUpdateStatus = {
   status: EmailHistoryEventTypeEnum.UPDATE_REQUEST,
 }
 
-server.use(
-  rest.get<EmailUpdateStatus>(
-    env.API_BASE_URL + '/native/v1/profile/email_update/status',
-    (req, res, ctx) => res(ctx.status(200), ctx.json(emailUpdateStatus))
-  )
-)
-
 describe('useEmailUpdateStatus hook', () => {
+  beforeEach(() => {
+    mockServer.get<EmailUpdateStatus>('/native/v1/profile/email_update/status', emailUpdateStatus)
+  })
   afterEach(jest.resetAllMocks)
 
   it('should retrieve email update status when logged in and internet connection is ok', async () => {

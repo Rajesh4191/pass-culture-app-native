@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { rest } from 'msw'
 import { Platform } from 'react-native'
 import CodePush from 'react-native-code-push'
 
@@ -8,7 +7,7 @@ import { env } from 'libs/environment'
 import * as jwt from 'libs/jwt'
 import * as Keychain from 'libs/keychain'
 import { eventMonitoring } from 'libs/monitoring'
-import { server } from 'tests/server'
+import { mockServer } from 'tests/mswServer'
 
 import {
   ApiError,
@@ -96,12 +95,10 @@ describe('[api] helpers', () => {
     })
 
     it('needs authentication response when refresh token fails', async () => {
-      server.use(
-        rest.post<RefreshResponse>(
-          `${env.API_BASE_URL}/native/v1/refresh_access_token`,
-          (_req, res, ctx) => res(ctx.status(400), ctx.json({}))
-        )
-      )
+      mockServer.post<RefreshResponse>('/native/v1/refresh_access_token', {
+        requestOptions: { persist: true },
+        responseOptions: { statusCode: 400 },
+      })
 
       mockGetAccessTokenStatus.mockReturnValueOnce('expired')
 

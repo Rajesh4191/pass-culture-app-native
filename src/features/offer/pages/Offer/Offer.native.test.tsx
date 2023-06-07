@@ -1,5 +1,3 @@
-import { rest } from 'msw'
-
 import { mockedBookingApi } from '__mocks__/fixtures/booking'
 import { BookingsResponse, SearchGroupNameEnumv2 } from 'api/gen'
 import { useAuthContext } from 'features/auth/context/AuthContext'
@@ -10,9 +8,8 @@ import { offerId, renderOfferPage } from 'features/offer/helpers/renderOfferPage
 import { beneficiaryUser } from 'fixtures/user'
 import { mockedAlgoliaResponse } from 'libs/algolia/__mocks__/mockedAlgoliaResponse'
 import { analytics } from 'libs/analytics'
-import { env } from 'libs/environment'
 import * as useFeatureFlagAPI from 'libs/firebase/firestore/featureFlags/useFeatureFlag'
-import { server } from 'tests/server'
+import { mockServer } from 'tests/mswServer'
 import { act, fireEvent, screen, waitFor } from 'tests/utils'
 
 /* TODO(PC-21140): Remove this mock when update to Jest 28
@@ -363,11 +360,7 @@ describe('<Offer />', () => {
       ongoing_bookings: [],
     }
 
-    server.use(
-      rest.get(env.API_BASE_URL + '/native/v1/bookings', async (_, res, ctx) =>
-        res(ctx.status(200), ctx.json(expectedResponse))
-      )
-    )
+    mockServer.get('/native/v1/bookings', expectedResponse)
 
     renderOfferPage(mockedBookingApi.id)
 

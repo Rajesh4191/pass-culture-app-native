@@ -3,6 +3,7 @@ import React from 'react'
 
 import { useAuthContext } from 'features/auth/context/AuthContext'
 import { favoriteResponseSnap } from 'features/favorites/fixtures/favoriteResponseSnap'
+import { simulateBackend } from 'features/favorites/helpers/simulateBackend'
 import { AddToFavoritesButton } from 'features/offer/components/AddToFavoritesButton/AddToFavoritesButton'
 import { env } from 'libs/environment'
 import { EmptyResponse } from 'libs/fetch'
@@ -61,6 +62,11 @@ const renderButton = (options?: Options) => {
     ...defaultOptions,
     ...options,
   }
+
+  simulateBackend({
+    id: offerId,
+    hasAddFavoriteError,
+  })
 
   server.use(
     rest.post<EmptyResponse>(`${env.API_BASE_URL}/native/v1/me/favorites`, (_req, res, ctx) => {

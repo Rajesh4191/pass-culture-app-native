@@ -1,5 +1,4 @@
 /* eslint-disable local-rules/no-react-query-provider-hoc */
-import { rest } from 'msw'
 
 import { navigate } from '__mocks__/@react-navigation/native'
 import {
@@ -10,9 +9,8 @@ import {
 } from 'api/gen'
 import { useBeneficiaryValidationNavigation } from 'features/auth/helpers/useBeneficiaryValidationNavigation'
 import { navigateToHome } from 'features/navigation/helpers'
-import { env } from 'libs/environment'
+import { mockServer } from 'tests/mswServer'
 import { reactQueryProviderHOC } from 'tests/reactQueryProviderHOC'
-import { server } from 'tests/server'
 import { act, renderHook } from 'tests/utils'
 
 jest.mock('features/navigation/helpers')
@@ -140,10 +138,5 @@ it('should navigate to IdentityCheckUnavailable if nextStep is Maintenance and m
 })
 
 function mockNextStepRequest(nextSubscription: NextSubscriptionStepResponse) {
-  return server.use(
-    rest.get<NextSubscriptionStepResponse>(
-      env.API_BASE_URL + `/native/v1/subscription/next_step`,
-      (_req, res, ctx) => res.once(ctx.status(200), ctx.json(nextSubscription))
-    )
-  )
+  mockServer.get('/native/v1/subscription/next_step', nextSubscription)
 }

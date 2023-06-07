@@ -1,20 +1,16 @@
 import { StackScreenProps } from '@react-navigation/stack'
-import { rest } from 'msw'
 import React from 'react'
 import DeviceInfo from 'react-native-device-info'
 
 import { navigation } from '__mocks__/@react-navigation/native'
 import { api } from 'api/api'
-import { AccountRequest } from 'api/gen'
 import { ELIGIBLE_AGE_DATE } from 'features/auth/fixtures/fixtures'
 import { mockGoBack } from 'features/navigation/__mocks__/useGoBack'
 import { RootStackParamList } from 'features/navigation/RootNavigator/types'
 import { analytics } from 'libs/analytics'
-import { env } from 'libs/environment'
-import { EmptyResponse } from 'libs/fetch'
 import * as useFeatureFlagAPI from 'libs/firebase/firestore/featureFlags/useFeatureFlag'
 import { eventMonitoring } from 'libs/monitoring'
-import { server } from 'tests/server'
+import { mockServer } from 'tests/mswServer'
 import { fireEvent, render, screen, act } from 'tests/utils'
 
 import { SignupForm } from './SignupForm'
@@ -204,14 +200,7 @@ describe('<SignupForm />', () => {
     })
 
     it('should log to sentry on API error', async () => {
-      server.use(
-        rest.post<AccountRequest, EmptyResponse>(
-          env.API_BASE_URL + '/native/v1/account',
-          (_req, res, ctx) => {
-            return res.once(ctx.status(400))
-          }
-        )
-      )
+      mockServer.post('/native/v1/account', { responseOptions: { statusCode: 400, data: {} } })
 
       render(<SignupForm {...defaultProps} />)
 
@@ -344,12 +333,4 @@ const fillBirthdayInput = async () => {
   )
 }
 
-const simulateSignupSuccess = () =>
-  server.use(
-    rest.post<AccountRequest, EmptyResponse>(
-      env.API_BASE_URL + '/native/v1/account',
-      (_req, res, ctx) => {
-        return res.once(ctx.status(200), ctx.json({}))
-      }
-    )
-  )
+const simulateSignupSuccess = () => mockServer.post('/native/v1/account', {})

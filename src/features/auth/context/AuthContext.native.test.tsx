@@ -1,19 +1,16 @@
 import mockdate from 'mockdate'
-import { rest } from 'msw'
 import React from 'react'
 
-import { UserProfileResponse } from 'api/gen'
 import { CURRENT_DATE } from 'features/auth/fixtures/fixtures'
 import { beneficiaryUser, nonBeneficiaryUser } from 'fixtures/user'
 // eslint-disable-next-line no-restricted-imports
 import { amplitude } from 'libs/amplitude'
-import { env } from 'libs/environment'
 import { NetInfoWrapper } from 'libs/network/NetInfoWrapper'
 import { useNetInfo } from 'libs/network/useNetInfo'
 import { QueryKeys } from 'libs/queryKeys'
 import { storage, StorageKey } from 'libs/storage'
+import { mockServer } from 'tests/mswServer'
 import { reactQueryProviderHOC } from 'tests/reactQueryProviderHOC'
-import { server } from 'tests/server'
 import { renderHook, waitFor } from 'tests/utils'
 
 import { AuthWrapper, useAuthContext } from './AuthContext'
@@ -25,11 +22,7 @@ jest.unmock('libs/network/NetInfoWrapper')
 const mockedUseNetInfo = useNetInfo as jest.Mock
 
 const mockUserProfileInfo = (user = beneficiaryUser) => {
-  server.use(
-    rest.get<UserProfileResponse>(env.API_BASE_URL + '/native/v1/me', (_req, res, ctx) =>
-      res(ctx.status(200), ctx.json(user))
-    )
-  )
+  mockServer.get('/native/v1/me', user)
 }
 
 describe('AuthContext', () => {
