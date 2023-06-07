@@ -25,12 +25,12 @@ consoleFailTestModule.cft({
 })
 
 global.beforeAll(() => {
-  server.listen()
+  // server.listen()
 })
 
 global.afterAll(() => {
-  server.resetHandlers()
-  server.close()
+  // server.resetHandlers()
+  // server.close()
 })
 
 global.afterEach(async () => {
