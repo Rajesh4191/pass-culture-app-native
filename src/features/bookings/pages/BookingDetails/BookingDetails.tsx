@@ -155,6 +155,7 @@ export function BookingDetails() {
   }
 
   const helmetTitle = `Ma réservation pour ${booking.stock.offer.name} | pass Culture`
+
   return (
     <Container>
       <Helmet title={helmetTitle} />

@@ -9,8 +9,8 @@
 
 ## Tasks
 
-- [ ] Mettre à jour le package json et le yarn.lock
-- [ ] On push et on regarde les tests qui cassent
+- [x] Mettre à jour le package json et le yarn.lock
+- [x] On push et on regarde les tests qui cassent
 - [ ] On lance un test avec un fakeTimers en local
 
 ---
