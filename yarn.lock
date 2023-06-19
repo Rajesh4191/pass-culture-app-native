@@ -21712,9 +21712,9 @@ react-native-launch-navigator@^1.0.8:
   integrity sha512-9/xsmcoXa02waKYX37Fx86U3e9FUDeNz0RmWiZ/JeBRAO1U0J2yK0xmTLiGyP4J9txZ9Qc9iZBJF+qMq8LXsEQ==
 
 react-native-linear-gradient@^2.5.6:
-  version "2.5.6"
-  resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.5.6.tgz#96215cbc5ec7a01247a20890888aa75b834d44a0"
-  integrity sha512-HDwEaXcQIuXXCV70O+bK1rizFong3wj+5Q/jSyifKFLg0VWF95xh8XQgfzXwtq0NggL9vNjPKXa016KuFu+VFg==
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.7.3.tgz#f77b71ed7c955e033f9cba5fc8478df57953eb27"
+  integrity sha512-iyJszlZ1Ech2c+2qV+isMvvJKyoctR9ashDkhJg1/cuSF0vQaeLV1FAYTT3qW9doxChJGxVAFfYoxotH0yi3Iw==
 
 react-native-lottie-splash-screen@^1.0.1:
   version "1.0.1"
