@@ -5,7 +5,7 @@ import { captureMonitoringError, eventMonitoring } from 'libs/monitoring'
 import { useNetInfoContext as useNetInfoContextDefault } from 'libs/network/NetInfoWrapper'
 import { reactQueryProviderHOC } from 'tests/reactQueryProviderHOC'
 import { requestPasswordResetFail, requestPasswordResetSuccess, server } from 'tests/server'
-import { simulateWebviewMessage, fireEvent, render, waitFor } from 'tests/utils'
+import { simulateWebviewMessage, fireEvent, render, waitFor, act } from 'tests/utils'
 import * as emailCheck from 'ui/components/inputs/emailCheck'
 
 import { ForgottenPassword } from './ForgottenPassword'
@@ -176,14 +176,16 @@ describe('<ForgottenPassword />', () => {
     const renderAPI = renderForgottenPassword()
 
     const emailInput = renderAPI.getByPlaceholderText('tonadresse@email.com')
-    fireEvent.changeText(emailInput, 'john.doe@gmail.com')
-    fireEvent.press(renderAPI.getByText('Valider'))
-    const recaptchaWebview = renderAPI.getByTestId('recaptcha-webview')
-    simulateWebviewMessage(recaptchaWebview, '{ "message": "success", "token": "fakeToken" }')
 
-    await waitFor(() => {
-      expect(eventMonitoring.captureMessage).not.toHaveBeenCalled()
+    fireEvent.changeText(emailInput, 'john.doe@gmail.com')
+
+    await act(async () => {
+      fireEvent.press(renderAPI.getByText('Valider'))
     })
+    const recaptchaWebview = renderAPI.getByTestId('recaptcha-webview')
+    await simulateWebviewMessage(recaptchaWebview, '{ "message": "success", "token": "fakeToken" }')
+
+    expect(eventMonitoring.captureMessage).not.toHaveBeenCalled()
   })
 
   describe('email format validation', () => {
