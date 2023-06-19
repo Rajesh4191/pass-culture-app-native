@@ -51,13 +51,19 @@ describe('Signup Form', () => {
     render(<SignupForm />)
 
     const emailInput = screen.getByPlaceholderText('tonadresse@email.com')
-    fireEvent.changeText(emailInput, 'email@gmail.com')
+    await act(async () => {
+      fireEvent.changeText(emailInput, 'email@gmail.com')
+    })
 
     const continueButton = screen.getByText('Continuer')
-    fireEvent.press(continueButton)
+    await act(async () => {
+      fireEvent.press(continueButton)
+    })
 
     const goBackButton = screen.getByTestId('Revenir en arrière')
-    fireEvent.press(goBackButton)
+    await act(async () => {
+      fireEvent.press(goBackButton)
+    })
 
     const firstStepTitle = await screen.findByText('Crée-toi un compte')
     expect(firstStepTitle).toBeTruthy()
