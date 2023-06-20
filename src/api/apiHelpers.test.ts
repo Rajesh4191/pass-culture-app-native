@@ -327,6 +327,19 @@ describe('[api] helpers', () => {
 
       expect(eventMonitoring.captureException).toHaveBeenCalledWith(error)
     })
+
+    it.only('should call api to refresh token only once every 3s', async () => {
+      const password = 'refreshToken'
+      mockGetRefreshToken.mockResolvedValueOnce(password)
+      mockFetch
+        .mockResolvedValueOnce(respondWith({ error: 'server error' }, 500))
+        .mockResolvedValueOnce(respondWith({ accessToken }))
+
+      await refreshAccessToken(api, 0)
+      await refreshAccessToken(api, 0)
+
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('handleGeneratedApiResponse', () => {
