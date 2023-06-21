@@ -16,10 +16,10 @@ const OFFER_WIDTH = getSpacing(20)
 
 type Props = {
   offer: Offer
-  color: string
+  categoryColor: string
 }
 
-export const OfferVideoModule: FunctionComponent<Props> = ({ offer, color }) => {
+export const OfferVideoModule: FunctionComponent<Props> = ({ offer, categoryColor }) => {
   const timestampsInMillis = offer.offer.dates?.map((timestampInSec) => timestampInSec * 1000)
   const labelMapping = useCategoryHomeLabelMapping()
 
@@ -30,7 +30,9 @@ export const OfferVideoModule: FunctionComponent<Props> = ({ offer, color }) => 
           <ImageTile width={OFFER_WIDTH} height={OFFER_HEIGHT} uri={offer.offer.thumbUrl} />
         </OfferImage>
         <OfferInformations>
-          <CategoryText color={color}>{labelMapping[offer.offer.subcategoryId]}</CategoryText>
+          <CategoryText categoryColor={categoryColor}>
+            {labelMapping[offer.offer.subcategoryId]}
+          </CategoryText>
           <TitleText numberOfLines={2}>{offer.offer.name}</TitleText>
           {/* // TODO(PC-22422): Update dates to display only 1 on modal*/}
           <AdditionalInfoText>{formatDates(timestampsInMillis)}</AdditionalInfoText>
@@ -74,8 +76,8 @@ const ArrowOffer = styledButton(Touchable)({
   right: getSpacing(4),
 })
 
-const CategoryText = styled(Typo.Caption)<{ color: string }>(({ color }) => ({
-  color: getTagColor(color),
+const CategoryText = styled(Typo.Caption)<{ categoryColor: string }>(({ categoryColor }) => ({
+  color: getTagColor(categoryColor),
   marginBottom: getSpacing(1),
 }))
 
