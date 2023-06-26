@@ -4,7 +4,8 @@ import { Location } from 'features/search/components/sections/Location/Location'
 import { initialSearchState } from 'features/search/context/reducer'
 import { LocationType, RadioButtonLocation } from 'features/search/enums'
 import { GeoCoordinates, Position } from 'libs/geolocation'
-import { render, fireEvent, waitFor } from 'tests/utils'
+import { render, fireEvent, act } from 'tests/utils'
+import { waitForModalOpeningAnimation } from 'tests/waitForModalOpeningAnimation'
 import * as useModalAPI from 'ui/components/modals/useModal'
 
 const mockSearchState = jest.fn().mockReturnValue({
@@ -33,22 +34,22 @@ describe('Location component', () => {
   it("should have EVERYWHERE description's by default", async () => {
     const { getByText, queryByText } = render(<Location />)
 
-    await waitFor(() => {
-      expect(getByText(RadioButtonLocation.EVERYWHERE)).toBeTruthy()
-      expect(queryByText(RadioButtonLocation.AROUND_ME)).toBeFalsy()
-      expect(queryByText(RadioButtonLocation.CHOOSE_PLACE_OR_VENUE)).toBeFalsy()
-    })
+    await act(async () => {})
+
+    expect(getByText(RadioButtonLocation.EVERYWHERE)).toBeTruthy()
+    expect(queryByText(RadioButtonLocation.AROUND_ME)).toBeFalsy()
+    expect(queryByText(RadioButtonLocation.CHOOSE_PLACE_OR_VENUE)).toBeFalsy()
   })
 
   it('should not have description when EVERYWHERE selected and position is null', async () => {
     mockPosition = null
     const { queryByText } = render(<Location />)
 
-    await waitFor(() => {
-      expect(queryByText(RadioButtonLocation.EVERYWHERE)).toBeFalsy()
-      expect(queryByText(RadioButtonLocation.AROUND_ME)).toBeFalsy()
-      expect(queryByText(RadioButtonLocation.CHOOSE_PLACE_OR_VENUE)).toBeFalsy()
-    })
+    await act(async () => {})
+
+    expect(queryByText(RadioButtonLocation.EVERYWHERE)).toBeFalsy()
+    expect(queryByText(RadioButtonLocation.AROUND_ME)).toBeFalsy()
+    expect(queryByText(RadioButtonLocation.CHOOSE_PLACE_OR_VENUE)).toBeFalsy()
   })
 
   it("should have AROUND_ME description's when selected", async () => {
@@ -59,11 +60,11 @@ describe('Location component', () => {
     })
     const { getByText, queryByText } = render(<Location />)
 
-    await waitFor(() => {
-      expect(queryByText(RadioButtonLocation.EVERYWHERE)).toBeFalsy()
-      expect(getByText(RadioButtonLocation.AROUND_ME)).toBeTruthy()
-      expect(queryByText(RadioButtonLocation.CHOOSE_PLACE_OR_VENUE)).toBeFalsy()
-    })
+    await act(async () => {})
+
+    expect(queryByText(RadioButtonLocation.EVERYWHERE)).toBeFalsy()
+    expect(getByText(RadioButtonLocation.AROUND_ME)).toBeTruthy()
+    expect(queryByText(RadioButtonLocation.CHOOSE_PLACE_OR_VENUE)).toBeFalsy()
   })
 
   it("should have VENUE description's when selected", async () => {
@@ -74,11 +75,11 @@ describe('Location component', () => {
     })
     const { getByText, queryByText } = render(<Location />)
 
-    await waitFor(() => {
-      expect(queryByText(RadioButtonLocation.EVERYWHERE)).toBeFalsy()
-      expect(queryByText(RadioButtonLocation.AROUND_ME)).toBeFalsy()
-      expect(getByText(RadioButtonLocation.CHOOSE_PLACE_OR_VENUE)).toBeTruthy()
-    })
+    await act(async () => {})
+
+    expect(queryByText(RadioButtonLocation.EVERYWHERE)).toBeFalsy()
+    expect(queryByText(RadioButtonLocation.AROUND_ME)).toBeFalsy()
+    expect(getByText(RadioButtonLocation.CHOOSE_PLACE_OR_VENUE)).toBeTruthy()
   })
 
   it("should have PLACE description's when selected", async () => {
@@ -89,11 +90,11 @@ describe('Location component', () => {
     })
     const { getByText, queryByText } = render(<Location />)
 
-    await waitFor(() => {
-      expect(queryByText(RadioButtonLocation.EVERYWHERE)).toBeFalsy()
-      expect(queryByText(RadioButtonLocation.AROUND_ME)).toBeFalsy()
-      expect(getByText(RadioButtonLocation.CHOOSE_PLACE_OR_VENUE)).toBeTruthy()
-    })
+    await act(async () => {})
+
+    expect(queryByText(RadioButtonLocation.EVERYWHERE)).toBeFalsy()
+    expect(queryByText(RadioButtonLocation.AROUND_ME)).toBeFalsy()
+    expect(getByText(RadioButtonLocation.CHOOSE_PLACE_OR_VENUE)).toBeTruthy()
   })
 
   it('should open modal when clicked', async () => {
@@ -108,8 +109,8 @@ describe('Location component', () => {
 
     fireEvent.press(getAllByText(RadioButtonLocation.EVERYWHERE)[0])
 
-    await waitFor(() => {
-      expect(mockShowModal).toBeCalledTimes(1)
-    })
+    await waitForModalOpeningAnimation()
+
+    expect(mockShowModal).toBeCalledTimes(1)
   })
 })

@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { SearchHeader } from 'features/search/components/SearchHeader/SearchHeader'
 import * as useFilterCountAPI from 'features/search/helpers/useFilterCount/useFilterCount'
-import { render, waitFor } from 'tests/utils'
+import { render, act } from 'tests/utils'
 
 jest.mock('libs/firebase/analytics')
 
@@ -44,8 +44,7 @@ describe('SearchHeader component', () => {
     jest.useFakeTimers('legacy')
     const renderAPI = render(<SearchHeader searchInputID={searchInputID} />)
 
-    await waitFor(() => {
-      expect(renderAPI).toMatchSnapshot()
-    })
+    await act(async () => {})
+    expect(renderAPI).toMatchSnapshot()
   })
 })
