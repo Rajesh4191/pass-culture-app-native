@@ -140,6 +140,7 @@ export type SubscriptionRootStackParamList = {
  * please update the deeplink handler in consequence.
  */
 export type RootStackParamList = {
+  ShakePage: undefined
   SignupForm: { preventCancellation?: boolean; offerId?: number } | undefined
   SignupFormV2: undefined
   Maintenance: undefined
