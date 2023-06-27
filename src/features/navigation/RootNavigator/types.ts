@@ -142,6 +142,7 @@ export type SubscriptionRootStackParamList = {
 export type RootStackParamList = {
   SignupForm: { preventCancellation?: boolean; offerId?: number } | undefined
   SignupFormV2: undefined
+  Dora: undefined
   Maintenance: undefined
   ABTestingPOC: undefined
   AccountCreated: undefined
@@ -282,8 +283,8 @@ export type RouteParams<
 
 export type NavigateParams<RouteName extends keyof ParamListBase> =
   undefined extends ParamListBase[RouteName]
-    ? [RouteName] | [RouteName, ParamListBase[RouteName]]
-    : [RouteName, ParamListBase[RouteName]]
+  ? [RouteName] | [RouteName, ParamListBase[RouteName]]
+  : [RouteName, ParamListBase[RouteName]]
 export type RootNavigateParams = NavigateParams<keyof RootStackParamList>
 export type AllNavigateParams = NavigateParams<keyof AllNavParamList>
 
