@@ -144,6 +144,7 @@ export type RootStackParamList = {
   ShakeStart: undefined
   ShakeChoice: undefined
   ShakeEnd: undefined
+  ShakeEndWithFavorite: undefined
   SignupForm: { preventCancellation?: boolean; offerId?: number } | undefined
   SignupFormV2: undefined
   Maintenance: undefined
